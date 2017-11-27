@@ -5,25 +5,144 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Project {
 
 	public static void main(String[] argv) {
-		
-//		AddMusician(new Musician("123","TEST","19092221111"));
-//		AddAlbum(new Album(11,"TEST","2000-01-01","DVD","aaaaaaaa","123"));
-//		AddSong(new Song("TEST SONG", "TEST AUTHOR", 11));
-//		AddSong(new Song("TEST SONG222", "TEST AUTHOR222", 11));
-		
-//		RemoveSong("TEST SONG222", 11);
-//		RemoveSong("TEST SONG", 11);
-//		RemoveAlbum(11);
-//		RemoveMusician("123");
-		
-		
+
+		UseClient();
+
 	}
 
-	public static void AddMusician(Musician m){
+	public static void UseClient(){
+		System.out.println("You can choose one of the following options. Enter your choice #:\n 	#1. Display information of all the tables\n 	#2. Add Musician\n 	#3. Remove Musician\n 	"
+				+ "#4. Add Album\n 	#5. Remove Album\n 	#6. Add Song\n 	#7. Remove Song\n YOUR CHOICE:");
+
+		Scanner input = new Scanner(System.in);
+
+		int user = input.nextInt();
+		switch(user){
+		
+		case 1: DisplayAllInformation();
+		System.out.println("----------------------------------------------------------------------------------------\n\n");
+		break;
+		
+		case 2: AddMusician();
+		System.out.println("----------------------------------------------------------------------------------------\n\n");
+		break;
+		
+		case 3: RemoveMusician();
+		System.out.println("----------------------------------------------------------------------------------------\n\n");
+		break;
+		
+		case 6: AddSong();
+		System.out.println("----------------------------------------------------------------------------------------\n\n");
+		break;
+		
+		case 7: RemoveSong();
+		System.out.println("----------------------------------------------------------------------------------------\n\n");
+		break;
+		
+		case 4: AddAlbum();
+		System.out.println("----------------------------------------------------------------------------------------\n");
+		break;
+		
+		case 5: RemoveAlbum();
+		System.out.println("----------------------------------------------------------------------------------------\n");
+		break;
+		
+		default: 			
+		}
+
+		UseClient();
+
+
+	}
+
+	public static void DisplayAllInformation(){
+
+		ArrayList<Musician> musicians= getAllMusicians();
+		ArrayList<Address> addresses = getAllAddresses();
+		ArrayList<Album> albums = getAllAlbums();
+		ArrayList<Instrument> instruments = getAllInstruments();
+		ArrayList<PerformedBy> performed = getAllPerformed();
+		ArrayList<Plays> plays = getAllPlays();
+		ArrayList<Song> songs = getAllSongs();
+
+		System.out.println("Table 1: MUSICIAN");
+		System.out.println("[");
+		for(Musician m : musicians){
+			System.out.println("SSN: "+m.getSSN()+" -- NAME: "+m.getName()+" -- PHONE: "+m.getPhone());
+		}
+		System.out.println("]\n");
+
+		System.out.println("Table 2: ADDRESS");
+		System.out.println("[");
+		for(Address m : addresses){
+			System.out.println("PHONENUM: "+m.getPhoneNum()+" -- STREET: "+m.getStreet()+" -- CITY: "+m.getCity()+" -- STATE: "+m.getState());
+		}
+		System.out.println("]\n");
+
+
+		System.out.println("Table 3: ALBUM");
+		System.out.println("[");
+		for(Album m : albums){
+			System.out.println("ALBUMID: "+m.getAlbumID()+" -- TITLE: "+m.getTitle()+" -- COPYRIGHTDATE: "+m.getCopyrightDate()+" -- FORMAT: "+m.getFormat()+" -- ALBUMIDENTIFIER: "+m.getAlbumIdentifier()+" -- PRODUCERSSN: "+m.getProducer());
+		}
+		System.out.println("]\n");
+
+
+		System.out.println("Table 4: INSTRUMENT");
+		System.out.println("[");
+		for(Instrument m : instruments){
+			System.out.println("ID: "+m.ID+" -- NAME: "+m.Name+" -- MUSICAL_KEY: "+m.key);
+		}
+		System.out.println("]\n");
+
+
+		System.out.println("Table 5: PERFORMED_BY");
+		System.out.println("[");
+		for(PerformedBy m : performed){
+			System.out.println("MUSICIANSSN: "+m.MusicianSSN+" -- SONG_TITLE: "+m.Song+" -- ALBUMID: "+m.AlbumID);
+		}
+		System.out.println("]\n");
+
+
+		System.out.println("Table 6: PLAYS");
+		System.out.println("[");
+		for(Plays m : plays){
+			System.out.println("MUSICIANSSN: "+m.Ssn+" -- INSTRUMENTID: "+m.InstrumentID);
+		}
+		System.out.println("]\n");
+
+
+		System.out.println("Table 7: SONG");
+		System.out.println("[");
+		for(Song m : songs){
+			System.out.println("SONG_TITLE: "+m.Title+" -- AUTHOR: "+m.Author+" -- ALBUMID: "+m.AlbumID);
+		}
+		System.out.println("]\n");
+
+
+	}
+
+	public static void AddMusician(){
+		Scanner input = new Scanner(System.in);
+
+		System.out.println("Enter a unique SSN for the new Musician:");
+		String ssn = input.nextLine();
+		System.out.println("Enter a name for the new Musician:");
+		String name = input.nextLine();
+		System.out.println("Choose a phoneNumber from the available list for "+name+"'s Address:");
+		System.out.println("   [");
+		for(Address s : getAllAddresses()){
+			System.out.println("          "+s.getPhoneNum());
+		}
+		System.out.println("   ]\n");
+		String phone = input.nextLine();
+		Musician m = new Musician(ssn, name, phone);
+
 		Connection connection = initiateDB();
 		try {
 
@@ -44,7 +163,16 @@ public class Project {
 
 	}
 
-	public static void RemoveMusician(String SSN){
+	public static void RemoveMusician(){
+		Scanner input = new Scanner(System.in);
+
+		System.out.println("Enter the SSN of the Musician you want to remove. Available Musicians are: ");
+		System.out.println("   [");
+		for(Musician m : getAllMusicians()){
+			System.out.println("     SSN: "+m.getSSN()+" -- NAME: "+m.getName()+" -- PHONE: "+m.getPhone());
+		}
+		System.out.println("   ]\n");
+		String SSN = input.nextLine();
 		Connection connection = initiateDB();
 		try {
 
@@ -63,8 +191,27 @@ public class Project {
 
 	}
 
-	public static void AddSong(Song song){
+	public static void AddSong(){
 
+		Scanner input = new Scanner(System.in);
+
+		System.out.println("Enter a TITLE for the new Song:");
+		String title = input.nextLine();
+		System.out.println("Enter a name for the Author of "+title+":");
+		String author = input.nextLine();
+		System.out.println("Choose the ID of the Album you want "+title+" to be in. Available Albums are: ");
+		System.out.println("   [");
+		for(Album a : getAllAlbums()){
+			System.out.println("          "+"AlbumID: "+a.getAlbumID()+"   Album Title: "+a.getTitle());
+		}
+		System.out.println("   ]");
+		System.out.println("If you want to create a brand new Album instead, Enter 0 to go to main menu. ENTER YOUR CHOICE:");
+		int id = input.nextInt();
+		if(id==0){
+			return;
+		}
+		Song song = new Song(title, author, id);
+		
 		Connection connection = initiateDB();
 		try {
 
@@ -85,8 +232,19 @@ public class Project {
 
 	}
 
-	public static void RemoveSong(String title, int AlbumID){
+	public static void RemoveSong(){
 
+		Scanner input = new Scanner(System.in);
+
+		System.out.println("Available Songs to delete are: ");
+		System.out.println("   [");
+		for(Song m : getAllSongs()){
+			System.out.println("     SONG_TITLE: "+m.getTitle()+" -- AUTHOR: "+m.getAuthor()+" -- ALBUM_ID: "+m.getAlbumID());
+		}
+		System.out.println("   ]\n");
+		System.out.println("Enter the SONG_TITLE, press ENTER, and type the ALBUM_ID of that song. Then press ENTER again to delete that song:");
+		String title = input.nextLine();
+		int AlbumID = input.nextInt();
 		Connection connection = initiateDB();
 		try {
 
@@ -106,8 +264,37 @@ public class Project {
 
 	}
 
-	public static void AddAlbum(Album album){
+	public static void AddAlbum(){
 
+		Scanner input = new Scanner(System.in);
+
+		System.out.println("Enter a unique ALBUMID for the new Album. It MUST NOT be any of the following:");
+		System.out.println("   [");
+		for(Album m : getAllAlbums()){
+			System.out.println("     ALBUMID: "+m.getAlbumID());
+		}
+		System.out.println("   ]\n Enter ALBUMID:");
+		String id = input.nextLine();
+		System.out.println("Enter a TITLE for the new Album:");
+		String title = input.nextLine();
+		System.out.println("Enter the COPYRIGHT DATE of "+title+" in YYYY-MM-DD format: ");
+		String date = input.nextLine();
+		System.out.println("Enter the FORMAT of "+title+" (example: CD, DVD, etc..): ");
+		String format = input.nextLine();
+		System.out.println("Enter an identifier for "+title+". It can be any combination of letters and character: ");
+		String identifier = input.nextLine();
+		System.out.println("Enter the SSN of the producer. The following producers are available:");
+		System.out.println("   [");
+		for(Musician m : getAllMusicians()){
+			System.out.println("     SSN: "+m.getSSN()+" -- NAME: "+m.getName());
+		}
+		System.out.println("   ]");
+		System.out.println("If you want to create a brand new Producer instead, Enter 0 to go to main menu. ENTER YOUR CHOICE:");
+		String ssn = input.nextLine();
+		if(ssn=="0"){
+			return;
+		}
+		Album album = new Album(Integer.parseInt(id), title, date, format, identifier, ssn);
 		Connection connection = initiateDB();
 		try {
 
@@ -130,8 +317,16 @@ public class Project {
 		CloseConnection(connection);
 	}
 
-	public  static void RemoveAlbum(int id){
+	public  static void RemoveAlbum(){
+		Scanner input = new Scanner(System.in);
 
+		System.out.println("Enter the ALBUMID the Album you want to remove. Available Albums are: ");
+		System.out.println("   [");
+		for(Album m : getAllAlbums()){
+			System.out.println("     ALBUMID: "+m.getAlbumID()+" -- TITLE: "+m.getTitle());
+		}
+		System.out.println("   ]\n");
+		int id = input.nextInt();
 
 		Connection connection = initiateDB();
 		try {
@@ -322,6 +517,8 @@ public class Project {
 		return null;
 
 	}
+
+
 
 	public static Connection initiateDB(){
 		try {
