@@ -11,11 +11,14 @@ public class Project {
 
 	public static void main(String[] argv) {
 
-		UseClient();
+		boolean loop = true;
+		while(loop){
+			boolean pause = UseClient();
+		}
 
 	}
 
-	public static void UseClient(){
+	public static boolean UseClient(){
 		System.out.println("You can choose one of the following options. Enter your choice #:\n 	#1. Display information of all the tables\n 	#2. Add Musician\n 	#3. Remove Musician\n 	"
 				+ "#4. Add Album\n 	#5. Remove Album\n 	#6. Add Song\n 	#7. Remove Song\n YOUR CHOICE:");
 
@@ -55,7 +58,7 @@ public class Project {
 		default: 			
 		}
 
-		UseClient();
+		return true;
 
 
 	}
@@ -130,7 +133,13 @@ public class Project {
 	public static void AddMusician(){
 		Scanner input = new Scanner(System.in);
 
-		System.out.println("Enter a unique SSN for the new Musician:");
+		System.out.println("Enter a unique SSN for the new Musician. It cannot be one of the following:");
+		System.out.println("   [");
+		for(Musician s : getAllMusicians()){
+			System.out.println("          "+s.getSSN());
+		}
+		System.out.println("   ]\n "
+				+ "");
 		String ssn = input.nextLine();
 		System.out.println("Enter a name for the new Musician:");
 		String name = input.nextLine();
@@ -291,7 +300,7 @@ public class Project {
 		System.out.println("   ]");
 		System.out.println("If you want to create a brand new Producer instead, Enter 0 to go to main menu. ENTER YOUR CHOICE:");
 		String ssn = input.nextLine();
-		if(ssn=="0"){
+		if(ssn.equals("0")){
 			return;
 		}
 		Album album = new Album(Integer.parseInt(id), title, date, format, identifier, ssn);
