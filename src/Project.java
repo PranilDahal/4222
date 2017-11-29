@@ -132,7 +132,44 @@ public class Project {
 
 	public static void AddMusician(){
 		Scanner input = new Scanner(System.in);
+		
+		System.out.println("Before you add a new Musician, Does he/she live in any of the following address?");
+		System.out.println("   [");
+		for(Address s : getAllAddresses()){
+			System.out.println("          "+s.getPhoneNum());
+		}
+		System.out.println("   ]\n If yes, ENTER the phone number. Else, enter 0 to add a NEW address:");
+		
+		String phone = input.nextLine();
+		if(phone.equals("0")){
+			System.out.println("Enter a unique phone number for this address:");
+			phone = input.nextLine();
+			System.out.println("Enter the number and street name for this address:");
+			String street = input.nextLine();
+			System.out.println("Enter the City for this address:");
+			String city = input.nextLine();
+			System.out.println("Enter the State:");
+			String state = input.nextLine();
+			Connection connection = initiateDB();
+			try {
 
+				String stm = "INSERT INTO Address(phonenum, street, city, state) VALUES (?,?,?,?)";
+				PreparedStatement pst = connection.prepareStatement(stm);
+				pst.setString(1, phone);
+				pst.setString(2, street);
+				pst.setString(3, city);
+				pst.setString(4, state);
+				pst.executeUpdate();
+				System.out.println("You have added a new address with phone number"+phone+" in State of "+state+" into the database.");
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				System.out.println("Failed to create Statement in AddMusician.");
+			}
+
+			CloseConnection(connection);
+			
+		}
 		System.out.println("Enter a unique SSN for the new Musician. It cannot be one of the following:");
 		System.out.println("   [");
 		for(Musician s : getAllMusicians()){
@@ -143,13 +180,7 @@ public class Project {
 		String ssn = input.nextLine();
 		System.out.println("Enter a name for the new Musician:");
 		String name = input.nextLine();
-		System.out.println("Choose a phoneNumber from the available list for "+name+"'s Address:");
-		System.out.println("   [");
-		for(Address s : getAllAddresses()){
-			System.out.println("          "+s.getPhoneNum());
-		}
-		System.out.println("   ]\n");
-		String phone = input.nextLine();
+		
 		Musician m = new Musician(ssn, name, phone);
 
 		Connection connection = initiateDB();
